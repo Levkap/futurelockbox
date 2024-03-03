@@ -1,1 +1,75 @@
 This is the future site of futurelockbox.com
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Virtual Time Capsule</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+        }
+        #timerBox {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="capsuleForm">
+        <h2>Create Your Time Capsule</h2>
+        <input type="date" id="sealDate">
+        <button onclick="sealCapsule()">Seal the Capsule</button>
+    </div>
+    <div id="timerBox"></div> <!-- Initially empty, no "Time" placeholder -->
+
+    <script>
+        function sealCapsule() {
+            const sealDateInput = document.getElementById("sealDate").value;
+            if (!sealDateInput) {
+                alert("Please choose a future date.");
+                return;
+            }
+            // Adjust for timezone, ensuring comparison is at the start of the chosen date
+            const sealDate = new Date(sealDateInput + 'T00:00:00');
+            const now = new Date();
+            if (sealDate <= now) {
+                alert("The chosen date must be in the future.");
+                return;
+            }
+
+            // Hide the form and start the countdown
+            document.getElementById("capsuleForm").style.display = "none";
+            updateCountdown(sealDate); // Call immediately to update countdown
+            // Set the interval to update the countdown every second
+            const timerUpdateInterval = setInterval(() => updateCountdown(sealDate, timerUpdateInterval), 1000);
+        }
+
+        function updateCountdown(sealDate, intervalId) {
+            const now = new Date();
+            const difference = sealDate - now;
+
+            // When countdown ends
+            if (difference <= 0) {
+                clearInterval(intervalId); // Stop the countdown
+                document.getElementById("timerBox").textContent = "Your capsule is now open!";
+                return;
+            }
+
+            // Calculate the time difference
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            // Display the countdown
+            document.getElementById("timerBox").textContent = `${days}d ${hours}h ${minutes}m ${seconds}s until your capsule opens.`;
+        }
+    </script>
+</body>
+</html>
